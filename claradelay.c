@@ -79,7 +79,7 @@ static int getStepForInterpolation(DelayValue * delayData, double delayTime, int
     return 0;
 }
 
-int testDoubleForEquality(double left, double right)
+static int testDoubleForEquality(double left, double right)
 {
     //////////////////////////////////////////////////////////////////
     //  test if two given values vary from each other within the    //
@@ -111,7 +111,7 @@ static double interpolate(double time1, double value1, double time2, double valu
     }
 }
 
-int findStepOfTime(DelayValue * delayData, double time, int startStep)
+static int findStepOfTime(DelayValue * delayData, double time, int startStep)
 {
     int step;
     int i;
@@ -152,7 +152,7 @@ int findStepOfTime(DelayValue * delayData, double time, int startStep)
     return 0;
 }
 
-int insertData(DelayValue * delayData, double time, double value)
+static int insertData(DelayValue * delayData, double time, double value)
 {
     int i;
     int insertStep;
@@ -186,7 +186,7 @@ int insertData(DelayValue * delayData, double time, double value)
 //-------------------------------    FUNCTIONS FROM .H-FILE    -----------------------------------------//
 //------------------------------------------------------------------------------------------------------//
 
-void * initDelay()
+void * clara_initDelay()
 {
     //////////////////////////////////////////////////////////////////////////////////////
     //  the correct way for Modelica to deal with external objects (like this table)    //
@@ -204,7 +204,7 @@ void * initDelay()
     return ptr;
 }
 
-void deleteDelay(void *ptr_to_table)
+void clara_deleteDelay(void *ptr_to_table)
 {
     //////////////////////////////////////////////////////////////////////////////
     //  Modelica then also needs a destructor to the pseudo object which frees  //
@@ -216,7 +216,7 @@ void deleteDelay(void *ptr_to_table)
     free(delayData);
 }
 
-void setDelayValue(void * ptr_to_table, double time, double value)
+void clara_setDelayValue(void * ptr_to_table, double time, double value)
 {
     int step;
     DelayValue * delayData = (DelayValue *)ptr_to_table;
@@ -282,7 +282,7 @@ void setDelayValue(void * ptr_to_table, double time, double value)
     }
 }
 
-void getDelayValuesAtTimes(void * ptr_to_table, double time, double value,  double wantedDelayTimes[], int getTimes_size, double *result, int result_size)
+void clara_getDelayValuesAtTimes(void * ptr_to_table, double time, double value,  double wantedDelayTimes[], int getTimes_size, double *result, int result_size)
 {
     int* step;
     int lastRoundsStep=-1;
@@ -316,7 +316,7 @@ void getDelayValuesAtTimes(void * ptr_to_table, double time, double value,  doub
     ///////////////////////////////////
     //  writing values to data set   //
     ///////////////////////////////////
-    setDelayValue(delayData, time, value);
+    clara_setDelayValue(delayData, time, value);
     //////////////////////////////////////////
     //  getting-value-for-result-array-loop //
     //////////////////////////////////////////
@@ -392,14 +392,14 @@ void getDelayValuesAtTimes(void * ptr_to_table, double time, double value,  doub
     free(step);
 }
 
-double getDelayValuesAtTime(void * ptr_to_table, double time, double value,  double getTime)
+double clara_getDelayValuesAtTime(void * ptr_to_table, double time, double value,  double getTime)
 {
     //////////////////////////////////////////////////////////////////
     //  call getDelayValuesAtTimes() with "faked" lists, in case //
     //  one just wants to know one value                            //
     //////////////////////////////////////////////////////////////////
     double getTimes[1]={getTime};
-    double result;
-    getDelayValuesAtTimes(ptr_to_table, time, value, getTimes, 1, &result, 1);
+    double result = 0.0;
+    clara_getDelayValuesAtTimes(ptr_to_table, time, value, getTimes, 1, &result, 1);
     return result;
 }
