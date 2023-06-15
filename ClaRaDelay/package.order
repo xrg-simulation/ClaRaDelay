@@ -1,3 +1,5 @@
 ExternalTable
 getDelayValuesAtTime
+ExternalTables
+getDelayValuesAtTimeArray
 Examples
