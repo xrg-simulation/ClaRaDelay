@@ -38,11 +38,15 @@ extern "C" {
 
 void * clara_initDelay();
 void clara_deleteDelay(void * ptr_to_table);
+void * clara_initDelayArray(int size);
+void clara_deleteDelayArray(void * ptr_to_table);
 void clara_setDelayValue(void * ptr_to_table, double time, double value);
 void clara_getDelayValuesAtTimes(void * ptr_to_table, double time, double value,
         double getTimes[], int getTimes_size, double *result, int result_size);
 double clara_getDelayValuesAtTime(void * ptr_to_table, double time, double value,
         double getTime);
+double clara_getDelayValuesAtTimeArray(void * ptr_to_tables, double time, double value,
+                                  double getTime, int index);
 
 #ifdef __cplusplus
 }

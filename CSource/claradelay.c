@@ -47,6 +47,12 @@ typedef struct DelayValue
     int latestStep;
 } DelayValue;
 
+typedef struct DelayValues
+{
+    int size;
+    DelayValue** delayValues;
+} DelayValues;
+
 //GLOBAL VARIABLES
 static int totalDelayValues;//............total length of data-array so far, starting with 500
 static double epsilonStepTime=1e-10;//.........if a time intervall is smaller than this number it gets saved anyway, even if minStepTime is set (userset)
@@ -214,6 +220,28 @@ void clara_deleteDelay(void *ptr_to_table)
     free(delayData->data);
     free(delayData->time);
     free(delayData);
+}
+
+void * clara_initDelayArray(int size)
+{
+    DelayValues* ptr = (DelayValues*) malloc(sizeof(DelayValues));
+    ptr->delayValues = (DelayValue**)malloc(size*sizeof(DelayValue*));
+    ptr->size = size;
+    for(int i=0;i<size;i++)
+    {
+        ptr->delayValues[i] = clara_initDelay();
+    }
+    return ptr;
+}
+
+void clara_deleteDelayArray(void *ptr_to_tables)
+{
+    DelayValues * delayValues = (DelayValues*)ptr_to_tables;
+    for(int i=0;i<delayValues->size;i++)
+    {
+        clara_deleteDelay(delayValues->delayValues[i]);
+    }
+    free(delayValues->delayValues);
 }
 
 void clara_setDelayValue(void * ptr_to_table, double time, double value)
@@ -401,5 +429,25 @@ double clara_getDelayValuesAtTime(void * ptr_to_table, double time, double value
     double getTimes[1]={getTime};
     double result = 0.0;
     clara_getDelayValuesAtTimes(ptr_to_table, time, value, getTimes, 1, &result, 1);
+    return result;
+}
+
+double clara_getDelayValuesAtTimeArray(void * ptr_to_tables, double time, double value, double getTime, int index)
+{
+    ///////////////////////
+    //  safety-requests  //
+    ///////////////////////
+    if (!ptr_to_tables)
+    {
+        ModelicaFormatError("getDelayValuesAtTimes: Use initDelay function befor call getDelayValuesAtTimes!\n");
+    }
+    double result = 0.0;
+    DelayValues* delayValues = (DelayValues*) ptr_to_tables;
+    if (index - 1 >= delayValues->size)
+    {
+        ModelicaFormatError("Index %i is out of bound %i", index - 1, delayValues->size);
+    }
+    DelayValue * ptr = delayValues->delayValues[index - 1];
+    result = clara_getDelayValuesAtTime(ptr, time, value, getTime);
     return result;
 }
