@@ -21,7 +21,10 @@ function getDelayValuesAtTime
   input Real getTime;
   output Real result;
 
-external"C" result = clara_getDelayValuesAtTime(table, simulationTime, value, getTime)
-annotation (Library={"Delay-V1"});
+external"C" result = clara_getDelayValuesAtTime(
+      table,
+      simulationTime,
+      value,
+      getTime) annotation (Library={"Delay-V1"});
 
 end getDelayValuesAtTime;

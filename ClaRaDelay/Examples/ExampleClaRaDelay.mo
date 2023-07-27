@@ -36,7 +36,9 @@ equation
                 delayTimes[t]);
   end for;
 
-  annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
+  annotation (
+    Icon(coordinateSystem(preserveAspectRatio=false), graphics={Bitmap(extent={{-100,-100},{100,100}}, fileName="modelica://ClaRaDelay/Resources/Images/Packages/ExecutableExample_b80.png")}),
+    Diagram(coordinateSystem(preserveAspectRatio=false)),
     Documentation(info="<html>
 <p>This example model demonstrates the usage of the ClaRaDelay and highlights the difference to th convetional delay.</p>
 <p>The signal should be delayed several times into <span style=\"font-family: Courier New;\">delayedSignals. </span>This can be achieved with a single reference table.</p>

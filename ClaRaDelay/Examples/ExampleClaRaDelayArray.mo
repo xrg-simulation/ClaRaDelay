@@ -1,10 +1,10 @@
 within ClaRaDelay.Examples;
 model ExampleClaRaDelayArray
 
-  parameter Real samplePeriod = 0.1;
-  parameter Integer nHistoricElements = 5;
+  parameter Real samplePeriod=0.1;
+  parameter Integer nHistoricElements=5;
 
-  Real[2] signal = {sin(2*Modelica.Constants.pi*time), cos(2*Modelica.Constants.pi*time)};
+  Real[2] signal={sin(2*Modelica.Constants.pi*time),cos(2*Modelica.Constants.pi*time)};
 
   import gdvs = ClaRaDelay.getDelayValuesAtTimeArray;
 
@@ -12,8 +12,7 @@ model ExampleClaRaDelayArray
   //ExternalTable for ClaRaDelay
   //Note: in contrast to Modelica delay we need only 1 delay-table pointer
   //////////////////////////////////////////////////////////////////////////////////
-  ClaRaDelay.ExternalTables claraTablePointers=
-      ClaRaDelay.ExternalTables(2);
+  ClaRaDelay.ExternalTables claraTablePointers=ClaRaDelay.ExternalTables(2);
 
   //////////////////////////////////////////////////////////////////////////////////
   //DelayTimes for ClaRaDelay
@@ -23,7 +22,7 @@ model ExampleClaRaDelayArray
   //////////////////////////////////////////////////////////////////////////////////
   Real[nHistoricElements] delayTimes={max(0, time - samplePeriod*(t - 1)) for t in 1:nHistoricElements};
 
-  Real[nHistoricElements, 2] delayedSignals;
+  Real[nHistoricElements,2] delayedSignals;
 
 equation
 
@@ -31,15 +30,17 @@ equation
   for t in 1:nHistoricElements loop
     for i in 1:2 loop
       delayedSignals[t, i] = gdvs(
-                  claraTablePointers,
-                  time,
-                  signal[i],
-                  delayTimes[t],
-                  i);
+        claraTablePointers,
+        time,
+        signal[i],
+        delayTimes[t],
+        i);
     end for;
   end for;
 
-  annotation (Icon(coordinateSystem(preserveAspectRatio=false)), Diagram(coordinateSystem(preserveAspectRatio=false)),
+  annotation (
+    Icon(coordinateSystem(preserveAspectRatio=false), graphics={Bitmap(extent={{-100,-100},{100,100}}, fileName="modelica://ClaRaDelay/Resources/Images/Packages/ExecutableExample_b80.png")}),
+    Diagram(coordinateSystem(preserveAspectRatio=false)),
     Documentation(info="<html>
 <p>This example model demonstrates the usage of the ClaRaDelay and highlights the difference to th convetional delay.</p>
 <p>The signal should be delayed several times into <span style=\"font-family: Courier New;\">delayedSignals. </span>This can be achieved with a single reference table.</p>
