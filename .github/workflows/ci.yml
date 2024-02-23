@@ -1,0 +1,223 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CMAKE_BUILD_TYPE: RelWithDebInfo
+
+jobs:
+  compile-msys:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    strategy:
+      matrix:
+        include: [
+          { msystem: mingw64, prefix: mingw-w64-x86_64 },
+          { msystem: mingw32, prefix: mingw-w64-i686 },
+          { msystem: ucrt64, prefix: mingw-w64-ucrt-x86_64 },
+        ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{matrix.msystem}}
+          update: true
+          install: |
+            git
+            make
+            ${{matrix.prefix}}-toolchain
+            ${{matrix.prefix}}-cmake
+            ${{matrix.prefix}}-make
+
+      - name: Compile with CMake
+        run: |
+          rm -rf ClaRaDelay/Resources/Library/win* ClaRaDelay/Resources/Library/mingw* ClaRaDelay/Resources/Library/ucrt*
+          cd CSource
+          cmake -S . -B build -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }}
+          cmake --build build --target install
+
+      - name: Archive library artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Resources_Library_${{matrix.msystem}}
+          path: ClaRaDelay/Resources/Library/${{matrix.msystem}}/
+          if-no-files-found: error
+
+  compile-win:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Compile 64bit with CMake
+        shell: pwsh
+        run: |
+          rm ClaRaDelay\Resources\Library\win* -r -fo
+          cd CSource
+          cmake -S . -B build64 -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }}
+          cmake --build build64 --target install
+
+      - name: Compile 32bit with CMake
+        run: |
+          cd CSource
+          cmake -S . -B build32 -A Win32 -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }}
+          cmake --build build32 --target install
+
+      - name: Archive library artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Resources_Library_win64
+          path: ClaRaDelay/Resources/Library/win64
+          if-no-files-found: error
+
+      - name: Archive library artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Resources_Library_win32
+          path: ClaRaDelay/Resources/Library/win32
+          if-no-files-found: error
+
+  compile-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.15.x'
+
+      - name: Install gcc cross-compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install gcc-multilib -qy
+
+      - name: Compile 64bit with CMake
+        run: |
+          rm -rf ClaRaDelay/Resources/Library/linux*
+          cd CSource
+          cmake -S . -B build64 -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }}
+          cmake --build build64 --target install
+
+      - name: Compile 32bit with CMake
+        run: |
+          cd CSource
+          cmake -S . -B build32 -DCMAKE_C_COMPILER=gcc -DCMAKE_C_FLAGS=-m32 -DCMAKE_BUILD_TYPE=${{ env.CMAKE_BUILD_TYPE }}
+          cmake --build build32 --target install
+
+      - name: Archive library artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Resources_Library_linux64
+          path: ClaRaDelay/Resources/Library/linux64/
+          if-no-files-found: error
+
+      - name: Archive library artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Resources_Library_linux32
+          path: ClaRaDelay/Resources/Library/linux32/
+          if-no-files-found: error
+
+  update-resources:
+    needs: [compile-msys, compile-win, compile-linux]
+    permissions:
+      contents: write
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Resources_Library_win64
+          path: ClaRaDelay/Resources/Library/win64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Resources_Library_win32
+          path: ClaRaDelay/Resources/Library/win32
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Resources_Library_ucrt64
+          path: ClaRaDelay/Resources/Library/ucrt64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Resources_Library_mingw64
+          path: ClaRaDelay/Resources/Library/mingw64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Resources_Library_mingw32
+          path: ClaRaDelay/Resources/Library/mingw32
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Resources_Library_linux64
+          path: ClaRaDelay/Resources/Library/linux64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Resources_Library_linux32
+          path: ClaRaDelay/Resources/Library/linux32
+
+      # Commit all changed libraries back to the repository
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Updating Library binaries
+          file_pattern: 'ClaRaDelay/Resources/Library/'
+
+  test:
+    needs: update-resources
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - uses: OpenModelica/setup-openmodelica@v1.0
+        with:
+          version: '1.22.1'
+          packages: |
+            'omc'
+            'omsimulator'
+          libraries: |
+            'Modelica 4.0.0'
+          omc-diff: true
+
+      - uses: OpenModelica/openmodelica-library-testing-action@v0.1
+        with:
+          library: 'ClaRaDelay'
+          library-version: '0.2.0'
+          modelica-file: 'ClaRaDelay/package.mo'
+          omc-version: 'stable'
+          reference-files-dir: 'ReferenceFiles'
+          reference-files-extension: 'csv'
+          reference-files-delimiter: '.'

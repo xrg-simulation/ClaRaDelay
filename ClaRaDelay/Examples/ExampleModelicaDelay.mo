@@ -18,5 +18,6 @@ equation
     Diagram(coordinateSystem(preserveAspectRatio=false)),
     Documentation(info="<html>
 <p>This example serves as reference how to delay a signal multiple times with the Modelica delay.</p>
-</html>"));
+</html>"),
+  experiment(StartTime = 0, StopTime = 1, Tolerance = 1e-6, Interval = 0.002));
 end ExampleModelicaDelay;
