@@ -44,5 +44,6 @@ equation
     Documentation(info="<html>
 <p>This example model demonstrates the usage of the ClaRaDelay and highlights the difference to th convetional delay.</p>
 <p>The signal should be delayed several times into <span style=\"font-family: Courier New;\">delayedSignals. </span>This can be achieved with a single reference table.</p>
-</html>"));
+</html>"),
+  experiment(StartTime = 0, StopTime = 1, Tolerance = 1e-6, Interval = 0.002));
 end ExampleClaRaDelayArray;
