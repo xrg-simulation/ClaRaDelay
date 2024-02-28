@@ -75,12 +75,14 @@ jobs:
         with:
           name: Resources_Library_win64
           path: ClaRaDelay/Resources/Library/win64
+          if-no-files-found: error
 
       - name: Archive library artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Resources_Library_win32
           path: ClaRaDelay/Resources/Library/win32
+          if-no-files-found: error
 
   compile-linux:
     runs-on: ubuntu-latest
@@ -115,12 +117,14 @@ jobs:
         with:
           name: Resources_Library_linux64
           path: ClaRaDelay/Resources/Library/linux64/
+          if-no-files-found: error
 
       - name: Archive library artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Resources_Library_linux32
           path: ClaRaDelay/Resources/Library/linux32/
+          if-no-files-found: error
 
   update-resources:
     needs: [compile-msys, compile-win, compile-linux]
@@ -137,6 +141,11 @@ jobs:
         with:
           name: Resources_Library_win64
           path: ClaRaDelay/Resources/Library/win64
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: Resources_Library_win32
+          path: ClaRaDelay/Resources/Library/win32
 
       - uses: actions/download-artifact@v4
         with:
