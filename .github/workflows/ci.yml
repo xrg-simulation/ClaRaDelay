@@ -91,7 +91,7 @@ jobs:
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@v2
         with:
-          cmake-version: '3.14.x'
+          cmake-version: '3.15.x'
 
       - name: Install gcc cross-compiler
         run: |
