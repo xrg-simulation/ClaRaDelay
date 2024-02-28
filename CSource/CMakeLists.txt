@@ -1,10 +1,16 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.15)
 
 project(ClaRaDelay C)
 
 set(PROJECT_NAME "Delay-V1")
 
 add_library(${PROJECT_NAME} STATIC "claradelay.c")
+
+if(MSVC)
+    cmake_policy(SET CMP0091 NEW)
+    set_property(TARGET ${PROJECT_NAME} PROPERTY
+            MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif(MSVC)
 
 # Detect target platform
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
