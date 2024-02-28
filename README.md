@@ -1,7 +1,5 @@
 # ClaRaDelay
 
-[![CI](https://github.com/xrg-simulation/ClaRaDelay/actions/workflows/ci.yml/badge.svg)](https://github.com/xrg-simulation/ClaRaDelay/actions/workflows/ci.yml)
-
 Vectorized Delay block for Modelica
 
 In contrast to the Modelica Delay, the ClaRaDelay vectorizes in time, i.e. you
@@ -14,6 +12,11 @@ The model
 [ClaRaDelay.Examples.ExampleClaRaDelay](ClaRaDelay\Examples\ExampleClaRaDelay.mo)
 demonstrates the usage.
 
+### CI Status
+
+Workflow and status of CI are visible here:
+[![CI](https://github.com/xrg-simulation/ClaRaDelay/actions/workflows/ci.yml/badge.svg)](https://github.com/xrg-simulation/ClaRaDelay/actions/workflows/ci.yml)
+
 ## C Code Compilation
 
 See [CSource/README.md](./CSource/README.md).
@@ -21,5 +24,3 @@ See [CSource/README.md](./CSource/README.md).
 ## License
 
 See [CSource/LICENSE](./CSource/LICENSE).
-
-## Contributing
