@@ -180,7 +180,7 @@ jobs:
           path: ClaRaDelay/Resources/Library/linux32
 
       # Commit all changed libraries back to the repository
-      - uses: stefanzweifel/git-auto-commit-action@v5
+      - uses: stefanzweifel/git-auto-commit-action@v6
         with:
           commit_message: Updating Library binaries
           file_pattern: 'ClaRaDelay/Resources/Library/'
