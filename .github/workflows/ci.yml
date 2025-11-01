@@ -144,37 +144,37 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: Resources_Library_win64
           path: ClaRaDelay/Resources/Library/win64
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: Resources_Library_win32
           path: ClaRaDelay/Resources/Library/win32
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: Resources_Library_ucrt64
           path: ClaRaDelay/Resources/Library/ucrt64
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: Resources_Library_mingw64
           path: ClaRaDelay/Resources/Library/mingw64
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: Resources_Library_mingw32
           path: ClaRaDelay/Resources/Library/mingw32
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: Resources_Library_linux64
           path: ClaRaDelay/Resources/Library/linux64
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v6
         with:
           name: Resources_Library_linux32
           path: ClaRaDelay/Resources/Library/linux32
