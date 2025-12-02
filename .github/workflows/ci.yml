@@ -212,7 +212,7 @@ jobs:
             'Modelica 4.0.0'
           omc-diff: true
 
-      - uses: OpenModelica/openmodelica-library-testing-action@v0.1
+      - uses: OpenModelica/openmodelica-library-testing-action@v0.2.1
         with:
           library: 'ClaRaDelay'
           library-version: '0.2.0'
