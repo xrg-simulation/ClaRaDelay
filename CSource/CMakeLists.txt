@@ -12,6 +12,10 @@ if(MSVC)
                  MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif(MSVC)
 
+if(POLICY CMP0177)
+    cmake_policy(SET CMP0177 NEW)
+endif()
+
 # Detect target platform
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     if(MSYS OR MINGW)
