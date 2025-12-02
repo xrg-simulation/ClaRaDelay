@@ -189,7 +189,7 @@ jobs:
     needs: update-resources
     strategy:
       matrix:
-        os: [ubuntu-22.04]
+        os: [ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
 
