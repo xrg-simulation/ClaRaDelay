@@ -6,6 +6,8 @@ set(PROJECT_NAME "Delay-V1")
 
 add_library(${PROJECT_NAME} STATIC "claradelay.c")
 
+set_target_properties(${PROJECT_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
 if(MSVC)
     cmake_policy(SET CMP0091 NEW)
     set_property(TARGET ${PROJECT_NAME} PROPERTY
